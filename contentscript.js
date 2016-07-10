@@ -579,6 +579,11 @@ function appendPopUp(event) {
 
     $('body').append(contentToPopupForDisplayId[id + '_popup']);
     document.getElementById(id + '_popup').style.left = (rect.left - 100) + 'px';
+    // Fix left overflow out of screen
+    if(rect.left - 100 < 0) {
+    document.getElementById(id + '_popup').style.left = '0';
+    }
+    // TODO: Fix right overflow out of screen with screenWidth
     document.getElementById(id + '_popup').style.top = (rect.top + 30) + 'px';
 }
 
@@ -596,16 +601,39 @@ function paragraphsInArticle() {
     return paragraphs;
 }
 
+if (typeof chrome != 'undefined') {
+  console.log('Chrome, initializating with chrome storage.');
+  chrome.storage.sync.get(null, handleInitResult);
+} else {
+  console.log('Not chrome, waiting for manual initialization.');
+}
 
-chrome.storage.sync.get(null, function(result) {
+// This function is called from Android client, with appropriate params
+function initFromAndroid(androidID, andoridScreenWidth) {
+    console.log('initFromAndroid: ', androidID, andoridScreenWidth);
+    handleInitResult({
+        userAccount: androidID
+    });
+}
+
+function saveSetting(obj) {
+    if (typeof chrome != 'undefined') {
+        // console.log('saving setting for ', JSON.stringify(obj, null, '\t'));
+        chrome.storage.sync.set(obj);
+    } else {
+        console.log('saving setting for other clients not implemented.');
+    }
+}
+
+function handleInitResult(result, androidID) {
 
     var allKeys = Object.keys(result);
 
-    userAccount = result.userAccount;
-    isWorking = result.isWorking;
-    wordDisplay = result.wordDisplay;
-    wordsReplaced = result.wordsReplaced;
-    websiteSetting = result.websiteSetting;
+    userAccount = result.userAccount || undefined;
+    isWorking = result.isWorking || undefined;
+    wordDisplay = result.wordDisplay || undefined;
+    wordsReplaced = result.wordsReplaced || undefined;
+    websiteSetting = result.websiteSetting || undefined;
 
     console.log(result.translationUrl);
     if (typeof result.translationUrl !== 'undefined') {
@@ -621,29 +649,29 @@ chrome.storage.sync.get(null, function(result) {
     if (userAccount == undefined) {
         var d = new Date();
         userAccount = 'id' + d.getTime() + '_1';
-        chrome.storage.sync.set({'userAccount': userAccount});
+        saveSetting({'userAccount': userAccount});
     }
 
     if (isWorking == undefined) {
         isWorking = 1;
-        chrome.storage.sync.set({'isWorking': isWorking});
+        saveSetting({'isWorking': isWorking});
     }
 
     if (wordDisplay == undefined) {
         wordDisplay = TranslationDirection.ENGLISH; 
-        chrome.storage.sync.set({'wordDisplay': wordDisplay});
+        saveSetting({'wordDisplay': wordDisplay});
     }
 
     if (wordsReplaced == undefined) {
         wordsReplaced = 6;
         //console.log("Setting words to replace to : " + wordsReplaced + " (default setting)");
-        chrome.storage.sync.set({'wordsReplaced': wordsReplaced});
+        saveSetting({'wordsReplaced': wordsReplaced});
     }
 
     if (websiteSetting == undefined) {
         websiteSetting = "cnn.com_bbc.co";
         //console.log("Setting websites to use to : " + websiteSetting + " (default setting)");
-        chrome.storage.sync.set({'websiteSetting': websiteSetting});
+        saveSetting({'websiteSetting': websiteSetting});
     }
 
     startTime = new Date();  // this is used to track the time between each click
@@ -725,7 +753,7 @@ chrome.storage.sync.get(null, function(result) {
         }
         }
 
-});
+};
 
 
 var HttpClient = function() {
