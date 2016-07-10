@@ -750,7 +750,7 @@ function handleInitResult(result, androidID) {
 
       requestTranslatedWords(url, params, i);
     }
-    }
+  }
 
 };
 
