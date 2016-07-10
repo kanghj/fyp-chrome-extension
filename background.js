@@ -4,9 +4,9 @@
  * used as the idenfifier of the user.
  */
 chrome.storage.sync.get(null, function(result) {
-    var url = makeUrlForGoogleOAuth();
+  var url = makeUrlForGoogleOAuth();
 
-    //if (!result.hasOwnProperty('userAccount')) {
-       // launchGoogleLoginFlow(url);
-    //}
+  //if (!result.hasOwnProperty('userAccount')) {
+     // launchGoogleLoginFlow(url);
+  //}
 });
