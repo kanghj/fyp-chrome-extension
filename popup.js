@@ -296,6 +296,10 @@ function onWindowLoad() {
     $('#documentation').click(function() {
         window.open(hostUrl+'howtouse');
     });
+
+    $('#login').click(function() {
+        launchGoogleLoginFlow(makeUrlForGoogleOAuth());
+    });
 }
 
 window.onload = onWindowLoad;

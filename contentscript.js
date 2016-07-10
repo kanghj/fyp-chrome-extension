@@ -50,8 +50,7 @@ var UserSettings = (function() {
     }
 
     UserSettings.prototype.readNumWords = function() {
-        //return _numWordsToTranslate;
-        return 6;
+        return _numWordsToTranslate;
     }
 
     return UserSettings;
