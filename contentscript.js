@@ -610,7 +610,7 @@ if (typeof chrome != 'undefined') {
 
 // This function is called from Android client, with appropriate params
 function initFromAndroid(androidID, andoridScreenWidth) {
-    console.log('initFromAndroid: ', androidID, andoridScreenWidth);
+    console.log('initFromAndroid: ' + androidID + ' ' + andoridScreenWidth);
     handleInitResult({
         userAccount: androidID
     });
